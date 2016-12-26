@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CSVMaker.Model.EnumBindingSourceExtension" Collapsed="true">
+    <Position X="2.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Model\EnumExtention.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSVMaker.Model.EnumDescriptionTypeConverter" Collapsed="true">
+    <Position X="4" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\EnumExtention.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSVMaker.Model.ExporterCSV" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="CSVMaker.Model.ExporterCSV.RiseLogMessage" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\ExporterCSV.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAABAAAAAAAAAAABAAAoBAAAA=</HashCode>
+      <FileName>Model\ExporterCSV.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSVMaker.Model.DataFile" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAACAAAIEAAAAAcAQAgAAAQAAAAAAAABAAAAA=</HashCode>
+      <FileName>Model\FileTable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.231" Collapsed="true" />
+  </Class>
+  <Class Name="CSVMaker.Model.InnerTable" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAACAAAIAACAAAQAQAiAAAAgAAAAQAAAAAAAA=</HashCode>
+      <FileName>Model\FileTable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.252" Collapsed="true" />
+  </Class>
+  <Class Name="CSVMaker.Model.MiscExtentions" Collapsed="true">
+    <Position X="4" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAIAEAAA=</HashCode>
+      <FileName>Model\MiscExtentions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSVMaker.Model.Profile" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAIAgAAAAAIAAAAAAIIQQgQAAYAAQAAAAAAAAIBA=</HashCode>
+      <FileName>Model\Profile.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CSVMaker.Model.Rule" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAECgAAAIAAAAAAAAQAgEAAAAAAAAAQEAAAABA=</HashCode>
+      <FileName>Model\Rule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CSVMaker.Model.Saver" Collapsed="true">
+    <Position X="4" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAIAAAAAAIAAAAAAAAAAAAAAAAAAAABEAAABAAAA=</HashCode>
+      <FileName>Model\Saver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="CSVMaker.Model.HeaderType" Collapsed="true">
+    <Position X="2.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Model\Profile.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CSVMaker.Model.HandleQuotesType" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAEBAAAAAAAAAAAIAAAAAEAAAA=</HashCode>
+      <FileName>Model\Rule.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

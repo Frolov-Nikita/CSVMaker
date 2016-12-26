@@ -1,0 +1,44 @@
+PID_LT514{g}SPRamp;HOLDING_REGISTERS;'=1020 + 0;float;ReadWrite;10325476;Текущее задание по рампе
+
+PID_LT514{g}Sta;HOLDING_REGISTERS;'=1020 + 2;int16;ReadWrite;10325476;Регулятор уровень воды в деаэраторе
+
+PID_LT514{g}Flt;HOLDING_REGISTERS;'=1020 + 3;int16;ReadWrite;10325476;Неисправности
+
+PID_LT514s{g}SP;HOLDING_REGISTERS;'=2100 + 0;float;ReadWrite;10325476;Задание
+
+PID_LT514s{g}PV;HOLDING_REGISTERS;'=2100 + 2;float;ReadWrite;10325476;Отфильтрованная обратная связь
+
+PID_LT514s{g}CO;HOLDING_REGISTERS;'=2100 + 4;float;ReadWrite;10325476;Выход регулятора
+
+PID_LT514s{g}KP;HOLDING_REGISTERS;'=2100 + 6;float;ReadWrite;10325476;Пропорциональный коэффициент
+
+PID_LT514s{g}TI;HOLDING_REGISTERS;'=2100 + 8;float;ReadWrite;10325476;Время интегрирования (Сек.)
+
+PID_LT514s{g}TD;HOLDING_REGISTERS;'=2100 + 10;float;ReadWrite;10325476;Время дифференцирования (Сек.)
+
+PID_LT514s{g}DBand;HOLDING_REGISTERS;'=2100 + 12;float;ReadWrite;10325476;Мертвая зона
+
+PID_LT514s{g}GainKP;HOLDING_REGISTERS;'=2100 + 14;float;ReadWrite;10325476;Коэффициент усиления в мертвой зоне
+
+PID_LT514s{g}FilterPV;HOLDING_REGISTERS;'=2100 + 16;float;ReadWrite;10325476;Фильтр сигнала PV
+
+PID_LT514s{g}dSP;HOLDING_REGISTERS;'=2100 + 18;float;ReadWrite;10325476;Рампа изменения SP 
+
+PID_LT514s{g}dCOMax;HOLDING_REGISTERS;'=2100 + 20;float;ReadWrite;10325476;Максимальное изменение выхода рег. за минуту
+
+PID_LT514s{g}dCOMin;HOLDING_REGISTERS;'=2100 + 22;float;ReadWrite;10325476;Минимальное приращение выхода регулятора
+
+PID_LT514s{g}CalcTime;HOLDING_REGISTERS;'=2100 + 24;float;ReadWrite;10325476;Время перерасчёта регулятора
+
+PID_LT514s{g}Cfg;HOLDING_REGISTERS;'=2100 + 26;int16;ReadWrite;10325476;Настройки
+
+PID_LT514s{g}Cmd;HOLDING_REGISTERS;'=2100 + 27;int16;ReadWrite;10325476;Команды
+
+PID_LT514s{g}Step_ampl;HOLDING_REGISTERS;'=2100 + 28;float;ReadWrite;10325476;Шаг выходного сигнала при автонастройке
+
+PID_LT514s{g}Tmax_step;HOLDING_REGISTERS;'=2100 + 30;float;ReadWrite;10325476;Максимальное время длительности автонастройки, сек.
+
+PID_LT514s{g}ScaleHi;HOLDING_REGISTERS;'=2100 + 32;float;ReadWrite;10325476;Шкала максимум для датчика обратной связи
+
+PID_LT514s{g}ScaleLo;HOLDING_REGISTERS;'=2100 + 34;float;ReadWrite;10325476;Шкала минимум для датчика обратной связи
+

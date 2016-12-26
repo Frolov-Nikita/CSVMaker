@@ -1,0 +1,125 @@
+﻿<Window x:Class="CSVMaker.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CSVMaker"
+        mc:Ignorable="d"
+        Title="Формировалка CSV" Height="353.73" Width="615.741" Icon="/CSVMaker;component/Resources/Icon1.ico">
+    <Grid x:Name="BaseGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition MinHeight="230"/>
+            <RowDefinition x:Name="BottomRow" Height="0" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftTreeColumn" Width="180"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Grid.Column="0" AllowDrop="True" Drop="treeView_Drop" BorderBrush="{x:Null}"
+                      ItemsSource="{Binding DataFiles}" 
+                      MouseDoubleClick="TreeView_MouseDoubleClick" KeyUp="TreeView_KeyUp"                     
+                      >
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Tables}">
+                        <StackPanel Orientation="Horizontal" >
+                            <Image Source="/CSVMaker;component/Resources/TableFile ico 16x16.png" />
+                            <Label Content="{Binding Name}" Padding="3" />
+                        </StackPanel>
+                        <HierarchicalDataTemplate.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Headers}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/CSVMaker;component/Resources/Table ico 16x16.png" />
+                                    <Label Content="{Binding Name}" Padding="2"/>
+                                </StackPanel>
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="/CSVMaker;component/Resources/TableHeader ico 16x16.png" />
+                                            <Label Content="{Binding}" Padding="1"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </HierarchicalDataTemplate.ItemTemplate>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+            <Label x:Name="DropTip" Foreground="#FFD1D1D1"  VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                       Visibility="{Binding TreeTipVisibility}"
+                       AllowDrop="True" Drop="treeView_Drop"
+                       MouseDoubleClick="TreeView_MouseDoubleClick">
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap">Броить сюда файлов.<LineBreak/>Или дважды кликнуть для открытия.</TextBlock>
+            </Label>
+
+            <StackPanel  Orientation="Vertical" Grid.Column="1" Margin="10,0,0,0">
+                <DockPanel>
+                    <Label Content="Лист с экземпларами:"  Width="150" VerticalAlignment="Center"/>
+                    <ComboBox Height="40" Margin="5" ItemsSource="{Binding Path=AllTables}" SelectedItem="{Binding Path=SelectedElementsTable}" Background="{x:Null}" BorderThickness="1" >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Label Content="{Binding Name}" Padding="0"/>
+                                    <Label Content="{Binding Path=Parent.Name}" Foreground="#FF6E6E6E" Padding="0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+
+                <DockPanel/>
+
+                <DockPanel>
+                    <Label Width="150" VerticalAlignment="Center" Content="Ссылка на структуру:"/>
+                    <ComboBox Height="30" Margin="5"  
+                              SelectedItem="{Binding Path=SelectedStructureHeader}"
+                              ItemsSource="{Binding Path=SelectedElementsTable.Headers}" Background="{x:Null}" >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding}" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+
+                <DockPanel>
+                    <Button Content="Профиль экспорта:" Width="145" Height="30"  Margin="5,5,0,5" VerticalAlignment="Center" Command="{Binding EditProfiles}" Background="{x:Null}"/>
+                    <ComboBox Height="30" Margin="5" 
+                              ItemsSource="{Binding Profiles}"
+                              SelectedItem="{Binding SelectedProfile}" Background="{x:Null}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Name}" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel>
+                    <Button Content="Экспорт в файл:" Width="145" Height="30" Margin="5,5,0,5" VerticalAlignment="Center" Command="{Binding SaveFileDialogCSV}" Background="{x:Null}"/>
+                    <ComboBox Height="30" Margin="5"
+                              ItemsSource="{Binding LastExportFilesList}"
+                              SelectedItem="{Binding SelectedExportFile}"
+                              VerticalAlignment="Center" Background="{x:Null}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding}" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+                <Button Content="Собрать CSV" Height="40" Margin="5" Command="{Binding ExportCSV}" SnapsToDevicePixels="True" Background="{x:Null}" BorderThickness="2"/>
+                
+            </StackPanel>
+
+            <GridSplitter HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Stretch" Width="10" MouseDoubleClick="GridSplitter_MouseDoubleClick_1" />
+
+        </Grid>
+
+        <GridSplitter VerticalAlignment="Bottom" Height="10" Grid.Row="1" HorizontalAlignment="Stretch" MouseDoubleClick="GridSplitter_MouseDoubleClick" />
+        <ListView Grid.Row="2" ItemsSource="{Binding Errors}" />
+    </Grid>
+</Window>

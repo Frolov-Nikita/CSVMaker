@@ -1,0 +1,86 @@
+﻿<Window x:Class="CSVMaker.View.ProfileEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:CSVMaker.View"
+        xmlns:localModel="clr-namespace:CSVMaker.Model"
+        mc:Ignorable="d"
+        Title="Редактор профиля" Height="313.474" Width="626.857">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="39"/>
+        </Grid.RowDefinitions>
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76*"/>
+                <ColumnDefinition Width="189*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="DGProfList" Grid.Column="0" Grid.RowSpan="2" AutoGenerateColumns="False"
+                      ItemsSource="{Binding ProfilesCpy}" 
+                      SelectedItem="{Binding SelectedProfile}" SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Профиль" Binding="{Binding Name}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="10" Grid.Column="1" Grid.RowSpan="2"/>
+            <Grid Margin="10,0,0,0" Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding SelectedProfile}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <DockPanel LastChildFill="True" Margin="4" Grid.Row="0">
+                    <Label Content="Название" Foreground="#A0A0A0" />
+                    <TextBox Text="{Binding Name}"/>
+                </DockPanel>
+
+                <TabControl x:Name="tabControl" Grid.Row="1">
+                    <TabItem Header="Общие">
+                        <StackPanel Orientation="Vertical" Margin="4">
+                            <StackPanel Orientation="Vertical" Margin="4">
+
+                                <DockPanel LastChildFill="True">
+                                    <Label Content="Заголовок CSV:" Foreground="#A0A0A0" Width="100"/>
+                                    <ComboBox
+                                        ItemsSource="{Binding Source={localModel:EnumBindingSource {x:Type localModel:HeaderType}}}"
+                                        SelectedItem="{Binding HeaderType}"/>
+                                </DockPanel>
+
+                                <TextBox MinHeight="40" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                                         Text="{Binding Header}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Разделитель столбцев" Foreground="#A0A0A0"/>
+                                <TextBox MinWidth="25" Text="{Binding FieldSeparator}"/>
+                            </StackPanel>
+
+                            <DockPanel LastChildFill="True" Margin="4">
+                                <Label Content="Кодировка:" Foreground="#A0A0A0" Width="100"/>
+                                <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding Encoding}" DisplayMemberPath="WebName"/>
+
+
+                            </DockPanel>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="Правила">
+                        <DataGrid MinHeight="100" ItemsSource="{Binding Rules}" />
+                    </TabItem>
+                </TabControl>
+                <Label Content="?" MouseUp="Label_MouseUp" Margin="385,1,0,187" Grid.Row="1" Padding="1" Foreground="#FF2D40B4"/>
+            </Grid>
+        </Grid>
+        <DockPanel Grid.Row="2" >
+            <Button Content="Сохранить и закрыть" Margin="4" Padding="6" Command="{Binding Save}"/>
+            <Button Content="   Отмена   " Margin="4" Padding="6" Command="{Binding Cancel}"/>
+        </DockPanel>
+    </Grid>
+</Window>
