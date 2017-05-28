@@ -54,19 +54,31 @@ namespace CSVMaker.Model
                     if (fileNameLower.EndsWith("xlsx") ||
                         fileNameLower.EndsWith("xlsm"))
                     {
-                        connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0 Xml;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0", Name);
+                        connectionString =
+                            $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={
+                                Name
+                            };Extended Properties=""Excel 12.0 Xml;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0";
                     }
                     else if (fileNameLower.EndsWith("xlsb"))
                     {
-                        connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0", Name);
+                        connectionString =
+                            $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={
+                                Name
+                            };Extended Properties=""Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0";
                     }
                     else if (fileNameLower.EndsWith("csv"))
                     {
-                        connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""text;Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0", Path.GetDirectoryName(Name));
+                        connectionString =
+                            $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={
+                                Path.GetDirectoryName(Name)
+                            };Extended Properties=""text;Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0";
                     }
                     else
                     {
-                        connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0", Name);
+                        connectionString =
+                            $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={
+                                Name
+                            };Extended Properties=""Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0";
                     }
                     _Connection = new OleDbConnection(connectionString);
                     

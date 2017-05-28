@@ -1,78 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using CSVMaker.Model;
 
 namespace CSVMaker.ViewModel
 {
     public class ProfileEditorViewModel : INotifyPropertyChanged
     {
-        #region Fields & Propertyes
-        MainViewModel mvm;
-        View.ProfileEditor pew;
+        private readonly MainViewModel _mvm;
+        private readonly View.ProfileEditor _pew;
         public ObservableCollection<Profile> Profiles { get; set; }
 
         public ObservableCollection<Profile> ProfilesCpy { get; set; }
 
-        Profile _SelectedProfile;
-        public Profile SelectedProfile { get { return _SelectedProfile; }
-            set { _SelectedProfile = value; NotifyPropertyChanged("SelectedProfile"); } }
-        #endregion
-
-        #region Комманды
+        private Profile _selectedProfile;
+        public Profile SelectedProfile { get => _selectedProfile;
+            set { _selectedProfile = value; NotifyPropertyChanged(); } }
+        
         public CommandRef Save { get; set; }
         public CommandRef Cancel { get; set; }
-        #endregion
-
-        #region Конструктор
+        
         public ProfileEditorViewModel(MainViewModel mvm)
         {//ObservableCollection<Profile> profiles
-            this.mvm = mvm;
+            _mvm = mvm;
             ProfilesCpy = new ObservableCollection<Profile>(mvm.Profiles);
-
-            #region Инициируем команды
+            
             Save = new CommandRef((args)=> { SaveMethod(); });
             Cancel = new CommandRef((args) => { CancelMethod(); });
-            #endregion
 
-            pew = new View.ProfileEditor();
-            pew.DataContext = this;
-            pew.Show();
-            pew.DGProfList.SelectedIndex = 0;
+            _pew = new View.ProfileEditor {DataContext = this};
+            _pew.Show();
+            _pew.DGProfList.SelectedIndex = 0;
         }
-        #endregion
 
-        #region методы
-        void SaveMethod()
+        private void SaveMethod()
         {
-            mvm.Profiles = ProfilesCpy;
-            pew.Close();
+            _mvm.Profiles = ProfilesCpy;
+            OnDone?.Invoke();
+            _pew.Close();
         }
-        void CancelMethod()
+
+        private void CancelMethod()
         {
-            pew.Close();
+            _pew.Close();
         }
-        #endregion
 
-        #region обработчики событий
-        #endregion
-
-        #region PropertyChanged
-
+        public delegate void Ui();
+        public event Ui OnDone;
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
 
-        #endregion
+        /// <summary>
+        /// Реализация интерфейса INotifyPropertyChanged
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

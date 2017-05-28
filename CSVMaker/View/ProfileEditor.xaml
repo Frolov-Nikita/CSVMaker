@@ -54,7 +54,7 @@
                                 </DockPanel>
 
                                 <TextBox MinHeight="40" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding Header}"/>
+                                         Text="{Binding CustomHeader}"/>
 
                             </StackPanel>
 
