@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -11,50 +12,49 @@ namespace CSVMaker.Model
 {
     public class Profile : INotifyPropertyChanged, ICloneable
     {
-        #region Fields & Props
-        string _Name = "";
+        string _name = "";
         /// <summary>
         /// Название профиля
         /// </summary>
         [XmlAttribute]
         public string Name
         {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged("Name"); }
+            get => _name;
+            set { _name = value; NotifyPropertyChanged(); }
         }
 
         [XmlAttribute]
         public HeaderType HeaderType { get; set; }
         
-        string _CustomHeader;
+        string _customHeader;
         /// <summary>
         /// Заголовок, который свтавляется перед табличной частью
         /// </summary>
         public string CustomHeader
         {
-            get { return _CustomHeader; }
-            set { _CustomHeader = value; NotifyPropertyChanged("CustomHeader"); }
+            get => _customHeader;
+            set { _customHeader = value; NotifyPropertyChanged(); }
         }
         
-        string _FieldSeparator = ";";
+        string _fieldSeparator = ";";
         /// <summary>
         /// Символ разделения столбцов таблицы
         /// </summary>
         [XmlAttribute]
         public string FieldSeparator
         {
-            get { return _FieldSeparator; }
-            set { _FieldSeparator = value; NotifyPropertyChanged("FieldSeparator"); }
+            get => _fieldSeparator;
+            set { _fieldSeparator = value; NotifyPropertyChanged(); }
         }
         
-        ObservableCollection<Rule> _Rules = new ObservableCollection<Rule>();
+        ObservableCollection<Rule> _rules = new ObservableCollection<Rule>();
         /// <summary>
         /// Правила для столбцев
         /// </summary>
         public ObservableCollection<Rule> Rules
         {
-            get { return _Rules; }
-            set { _Rules = value; NotifyPropertyChanged("Rules"); }
+            get => _rules;
+            set { _rules = value; NotifyPropertyChanged(); }
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace CSVMaker.Model
         /// </summary>
         [XmlAttribute]
         public string EncodingName {
-            get {return Encoding.WebName; }
+            get => Encoding.WebName;
             set { Encoding = Encoding.GetEncoding(value); }
         }
 
@@ -92,83 +92,74 @@ namespace CSVMaker.Model
         };
 
         [XmlIgnore]
-        static Microsoft.JScript.Vsa.VsaEngine jsEngine = Microsoft.JScript.Vsa.VsaEngine.CreateEngine();
+        static readonly Microsoft.JScript.Vsa.VsaEngine JsEngine = Microsoft.JScript.Vsa.VsaEngine.CreateEngine();
         
-        #endregion
-
-        #region Constructor
         public Profile()
-        {            
-            this.Name = "Default";
-            this.CustomHeader = "";
-            this.FieldSeparator = ";";
-            this.Encoding = Encoding.UTF8;
-            this.Rules = new ObservableCollection<Rule>();
+        {
+            Name = "Default";
+            CustomHeader = "";
+            FieldSeparator = ";";
+            Encoding = Encoding.UTF8;
+            Rules = new ObservableCollection<Rule>();
         }
-        #endregion
-
-        #region Methods
+        
         /// <summary>
         /// Проверяет, вычисляет и обрабатывает значение
         /// </summary>
-        /// <param name="FieldName">Названия правила/поля</param>
-        /// <param name="FieldValue">Проверяемое значение</param>
+        /// <param name="fieldName">Названия правила/поля</param>
+        /// <param name="fieldValue">Проверяемое значение</param>
         /// <returns>Сообщение об ошибке</returns>
-        public string Assert(string FieldName, ref string FieldValue)
+        public string Assert(string fieldName, ref string fieldValue)
         {
             // Вычисляем формулу, если она есть
-            if (FieldValue.StartsWith("'=") || FieldValue.StartsWith("="))
+            if (fieldValue.StartsWith("'=") || fieldValue.StartsWith("="))
             {// тут формула 
-                try { FieldValue = Microsoft.JScript.Eval.JScriptEvaluate(FieldValue.Replace("'=", "").Replace("=", ""), jsEngine).ToString(); }
-                catch { return "Неправильная формула в поле " + FieldName; }
+                try { fieldValue = Microsoft.JScript.Eval.JScriptEvaluate(fieldValue.Replace("'=", "").Replace("=", ""), JsEngine).ToString(); }
+                catch { return "Неправильная формула в поле " + fieldName; }
             }
 
-            foreach (Rule r in Rules)
-                if ((r.Name == FieldName) && (!r.Ignore))
+            foreach (var r in Rules)
+                if ((r.Name == fieldName) && (!r.Ignore))
                 {
                     // Проверка на длину
-                    if (FieldValue.Length > r.MaxLength)  return "Длянна поля " + FieldName + " Больше " + r.MaxLength.ToString(); 
+                    if (fieldValue.Length > r.MaxLength)  return "Длянна поля " + fieldName + " Больше " + r.MaxLength.ToString(); 
 
                     // Проверка на regexp
                     try
                     {
                         if(r.RegExp != "")
-                            if (!Regex.IsMatch(FieldValue, r.RegExp)) return "Поля " + FieldName + " содержит недопустимые символы";
+                            if (!Regex.IsMatch(fieldValue, r.RegExp)) return "Поля " + fieldName + " содержит недопустимые символы";
                     }
                     catch { return "Некорректное правило проверки на допустимые символы!"; }
 
                     // обработка кавычек
-                    r.HandleQuotes(ref FieldValue);
+                    r.HandleQuotes(ref fieldValue);
                 }//end_if
             return "";
         }//AssertField
-        #endregion
-
-        #region PropertyChanged
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info)
+        /// <summary>
+        /// Реализация интерфейса INotifyPropertyChanged
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
 
         public object Clone()
         {
             Profile r =  new Profile()
             {
-                Name = this.Name,
-                Encoding = this.Encoding,
-                HeaderType = this.HeaderType,
-                CustomHeader = this.CustomHeader,
-                FieldSeparator = this.FieldSeparator                
+                Name = Name,
+                Encoding = Encoding,
+                HeaderType = HeaderType,
+                CustomHeader = CustomHeader,
+                FieldSeparator = FieldSeparator                
             };
-            foreach (Rule rul in Rules) r.Rules.Add((Rule)rul.Clone());
+            foreach (var rul in Rules) r.Rules.Add((Rule)rul.Clone());
             return r;
         }
 

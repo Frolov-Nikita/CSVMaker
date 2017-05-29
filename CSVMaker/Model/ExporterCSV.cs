@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSVMaker.Model
 {
     /// <summary>
     /// 
     /// </summary>
-    public class ExporterCSV
+    public class ExporterCsv
     {
         string FileName;
         Profile Profile;
         List<DataColumn> ColumnOrder = null;
         
-        public ExporterCSV(string fileName, Profile profile)
+        public ExporterCsv(string fileName, Profile profile)
         {
             FileName = fileName;
             Profile = profile;

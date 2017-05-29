@@ -232,7 +232,7 @@ namespace CSVMaker.ViewModel
             }
 
             // создаем экспортер
-            ExporterCSV expCsv = new ExporterCSV(SelectedExportFile, SelectedProfile);
+            ExporterCsv expCsv = new ExporterCsv(SelectedExportFile, SelectedProfile);
             expCsv.RiseLogMessageEvent += Log;
 
             // перебираем элементы и записываем
@@ -353,8 +353,7 @@ namespace CSVMaker.ViewModel
         }
         
         public event PropertyChangedEventHandler PropertyChanged;
-
-
+        
         /// <summary>
         /// Реализация интерфейса INotifyPropertyChanged
         /// </summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -14,7 +15,6 @@ namespace CSVMaker.Model
     /// </summary>
     public class Rule : INotifyPropertyChanged, ICloneable
     {
-        #region Fields & Props
         [DisplayName("Ватрушка")]
         [XmlAttribute]
         public string Name { get; set; }
@@ -28,9 +28,7 @@ namespace CSVMaker.Model
         public bool     MastExist { get; set; }
         [XmlAttribute]
         public bool     Ignore { get; set; }
-        #endregion
-
-        #region Constructor
+        
         public Rule()
         {
             Name = "Поле";
@@ -38,49 +36,46 @@ namespace CSVMaker.Model
             MaxLength = 512;
             HandleQuotesType = HandleQuotesType.None;
         }
-        #endregion
 
-        public void HandleQuotes(ref string FieldVal){
+        public void HandleQuotes(ref string fieldVal){
             switch (HandleQuotesType)
             {
                 case HandleQuotesType.Add:
-                    while (FieldVal.StartsWith("\"") || FieldVal.EndsWith("\""))
+                    while (fieldVal.StartsWith("\"") || fieldVal.EndsWith("\""))
                     {
-                        FieldVal = FieldVal.StartsWith("\"") ? FieldVal.Substring(1, FieldVal.Length - 1) : FieldVal;
-                        FieldVal = FieldVal.EndsWith("\"") ? FieldVal.Substring(0, FieldVal.Length - 1) : FieldVal;
+                        fieldVal = fieldVal.StartsWith("\"") ? fieldVal.Substring(1, fieldVal.Length - 1) : fieldVal;
+                        fieldVal = fieldVal.EndsWith("\"") ? fieldVal.Substring(0, fieldVal.Length - 1) : fieldVal;
                     }
-                    FieldVal = "\"" + FieldVal + "\"";
+                    fieldVal = "\"" + fieldVal + "\"";
                     break;
                 case HandleQuotesType.AddRemoveAll:
-                    FieldVal = "\"" + FieldVal.Replace("\"","") + "\"";
+                    fieldVal = "\"" + fieldVal.Replace("\"","") + "\"";
                     break;
                 case HandleQuotesType.Remove:
-                    while (FieldVal.StartsWith("\"") || FieldVal.EndsWith("\""))
+                    while (fieldVal.StartsWith("\"") || fieldVal.EndsWith("\""))
                     {
-                        FieldVal = FieldVal.StartsWith("\"") ? FieldVal.Substring(1, FieldVal.Length - 1) : FieldVal;
-                        FieldVal = FieldVal.EndsWith("\"") ? FieldVal.Substring(0, FieldVal.Length - 1) : FieldVal;
+                        fieldVal = fieldVal.StartsWith("\"") ? fieldVal.Substring(1, fieldVal.Length - 1) : fieldVal;
+                        fieldVal = fieldVal.EndsWith("\"") ? fieldVal.Substring(0, fieldVal.Length - 1) : fieldVal;
                     }
                     break;
                 case HandleQuotesType.RemoveAll:
-                    FieldVal = FieldVal.Replace("\"", "");
+                    fieldVal = fieldVal.Replace("\"", "");
                     break;
                 default:
                     break;
             }
         }
 
-        #region PropertyChanged
-
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info)
+        /// <summary>
+        /// Реализация интерфейса INotifyPropertyChanged
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
 
         /// <summary>
         /// Для реализации клонирования

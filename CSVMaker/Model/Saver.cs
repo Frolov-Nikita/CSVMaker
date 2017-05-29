@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 
@@ -29,8 +22,7 @@ namespace CSVMaker.Model
         public bool OpenAs<T>(ref T obj)
         //    where T : class, IEnumerable, ICollection
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "*."+ Ext+"|*." + Ext;
+            OpenFileDialog ofd = new OpenFileDialog {Filter = "*." + Ext + "|*." + Ext};
             if(ofd.ShowDialog()==true)
             {
                 FileName = ofd.FileName;
@@ -62,7 +54,6 @@ namespace CSVMaker.Model
         /// Открывает указанный файл и десериализует его в obj
         /// </summary>
         /// <typeparam name="T">Тип десиреализуемого объекта</typeparam>
-        /// <param name="fileName">Путь к файлу</param>
         /// <param name="obj">Объект в который десериализуется файл</param>
         /// <returns>true - Объект был упешно восстановлен из файла. 0 - Возникли проблемы.</returns>
         public bool Open<T>(ref T obj)
@@ -78,7 +69,10 @@ namespace CSVMaker.Model
                     textWriter.Close();
                     return true;
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
             return false;
         }
@@ -96,12 +90,11 @@ namespace CSVMaker.Model
             FileName = fileName;
             return Open(ref obj);
         }
-        
+
         /// <summary>
         /// Сохраняет переданный объект в указанный файл
         /// </summary>
         /// <typeparam name="T">Тип сиреализуемого объекта</typeparam>
-        /// <param name="fileName">Путь к файлу</param>
         /// <param name="obj">Объект который сериализуется в файл</param>
         /// <returns>true - Объект был упешно восстановлен из файла. 0 - Возникли проблемы.</returns>
         public bool Save<T>( T obj)
@@ -118,8 +111,9 @@ namespace CSVMaker.Model
                 textWriter.Close();
                 return true;
             }
-            catch 
+            catch
             {
+                // ignored
             }
             return false;
         }

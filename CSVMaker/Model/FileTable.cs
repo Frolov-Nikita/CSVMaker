@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace CSVMaker.Model
@@ -17,38 +15,38 @@ namespace CSVMaker.Model
     /// </summary>
     public class DataFile: INotifyPropertyChanged, IDisposable
     {
-        string _Name = "";
+        string _name = "";
         public string Name {
-            get { return _Name; }
+            get => _name;
             set {
-                _Name = value;
-                NotifyPropertyChanged("Name");
+                _name = value;
+                NotifyPropertyChanged();
                 GetTables();
-                ; } }
+                } }
 
-        ObservableCollection<InnerTable> _Tables = new ObservableCollection<InnerTable>();
-        public ObservableCollection<InnerTable> Tables { get { return _Tables; } }
+        ObservableCollection<InnerTable> _tables = new ObservableCollection<InnerTable>();
+        public ObservableCollection<InnerTable> Tables => _tables;
 
-        OleDbConnection _Connection = null;
+        OleDbConnection _connection;
         public OleDbConnection Connection { get {
-                if (_Connection != null)
+                if (_connection != null)
                 {
-                    if (_Connection.State == ConnectionState.Broken)
-                    { _Connection.Close(); _Connection.Dispose(); _Connection = null; }
+                    if (_connection.State == ConnectionState.Broken)
+                    { _connection.Close(); _connection.Dispose(); _connection = null; }
 
-                    if ((_Connection.State == ConnectionState.Executing) ||
-                        (_Connection.State == ConnectionState.Connecting) ||
-                        (_Connection.State == ConnectionState.Fetching))
+                    if (_connection != null && ((_connection.State == ConnectionState.Executing) ||
+                                                (_connection.State == ConnectionState.Connecting) ||
+                                                (_connection.State == ConnectionState.Fetching)))
                     { Thread.Sleep(500); }
 
-                    if ((_Connection.State == ConnectionState.Executing) ||
-                        (_Connection.State == ConnectionState.Connecting) ||
-                        (_Connection.State == ConnectionState.Fetching))
-                    { _Connection.Close(); _Connection.Dispose(); _Connection = null; }
+                    if (_connection != null && ((_connection.State == ConnectionState.Executing) ||
+                                                (_connection.State == ConnectionState.Connecting) ||
+                                                (_connection.State == ConnectionState.Fetching)))
+                    { _connection.Close(); _connection.Dispose(); _connection = null; }
                 }
-                if (_Connection == null)
+                if (_connection == null)
                 {
-                    var connectionString = "";
+                    string connectionString;
                     var fileNameLower = Name.ToLower();
 
                     if (fileNameLower.EndsWith("xlsx") ||
@@ -80,78 +78,43 @@ namespace CSVMaker.Model
                                 Name
                             };Extended Properties=""Excel 12.0;HDR=YES;IMEX=1"";Jet OLEDB:Database Locking Mode=0";
                     }
-                    _Connection = new OleDbConnection(connectionString);
+                    _connection = new OleDbConnection(connectionString);
                     
                 }
 
-                if (_Connection.State != ConnectionState.Open) _Connection.Open();
-                return _Connection; } }
+                if (_connection.State != ConnectionState.Open) _connection.Open();
+                return _connection; } }
 
         public DataFile(string name)
         {
             Name = name;
         }
-
-        /// <summary>
-        /// Строка подключения по имени файла
-        /// </summary>
-        /// <param name="FileName"></param>
-        /// <returns></returns>
-        OleDbConnection GetConnection()
-        {
-            var connectionString = "";
-            var fileNameLower = Name.ToLower();
-
-            if (fileNameLower.EndsWith("xlsx") ||
-                fileNameLower.EndsWith("xlsm"))
-            {
-                connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0 Xml;HDR=YES;IMEX=1""", Name);
-            }
-            else if (fileNameLower.EndsWith("xlsb"))
-            {
-                connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""", Name);
-            }
-            else if (fileNameLower.EndsWith("csv"))
-            {
-                connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""text;Excel 12.0;HDR=YES;IMEX=1""", Path.GetDirectoryName(Name));
-            }
-            else
-            {
-                connectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""", Name);
-            }
-            return new OleDbConnection(connectionString);
-        }//GetConnectionString
         
-        void GetTables()
+        private void GetTables()
         {
-            _Tables.Clear();
+            _tables.Clear();
+            
+            var schemaTables = Connection.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, new Object[] { null, null, null, "TABLE" });
 
-            //if (Connection.State == ConnectionState.Closed) Connection.Open();
-
-            var SchemaTables = Connection.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, new Object[] { null, null, null, "TABLE" });
-
-            _Tables.AddRange(from DataRow row in SchemaTables.Rows select new InnerTable(this, row["TABLE_NAME"].ToString()));
+            _tables.AddRange(from DataRow row in schemaTables.Rows select new InnerTable(this, row["TABLE_NAME"].ToString()));
             Connection.Close();
         }
-
-        #region PropertyChanged
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info)
+        /// <summary>
+        /// Реализация интерфейса INotifyPropertyChanged
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void Dispose()
         {
-            _Connection.Dispose();
+            _connection.Dispose();
         }
-
-        #endregion
     }//GetTables
 
     /// <summary>
@@ -164,29 +127,29 @@ namespace CSVMaker.Model
         public DataFile Parent { get; set; }
         public ObservableCollection<string> Headers { get; set; } = new ObservableCollection<string>();
 
-        DataTable _Table = null;
+        DataTable _table;
         public DataTable Table{ get{
-                if (_Table == null)
+                if (_table == null)
                 {
-                    _Table = new DataTable();
-                    var da = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]",Name), Parent.Connection);
-                    da.Fill(_Table);
+                    _table = new DataTable();
+                    var da = new OleDbDataAdapter($"SELECT * FROM [{Name}]", Parent.Connection);
+                    da.Fill(_table);
                     da.Dispose();
                 }
-                return _Table;
+                return _table;
             }
         }
 
-        public InnerTable(DataFile parent, string TableName) {
+        public InnerTable(DataFile parent, string tableName) {
             Parent = parent;
-            Name = TableName;
-            SearchName = TableName.Replace("$", "").Replace("#", "").Replace("^", "").Replace("'", "");
+            Name = tableName;
+            SearchName = tableName.Replace("$", "").Replace("#", "").Replace("^", "").Replace("'", "");
             GetHeaders();
         }
 
         void GetHeaders(){
-            string Q = string.Format("SELECT TOP 1 * FROM [{0}]", Name);
-            var da = new OleDbDataAdapter(Q, Parent.Connection);
+            string q = $"SELECT TOP 1 * FROM [{Name}]";
+            var da = new OleDbDataAdapter(q, Parent.Connection);
             DataTable dataTable = new DataTable();
             da.Fill(dataTable);
             Headers.Clear();
@@ -198,27 +161,25 @@ namespace CSVMaker.Model
 
         public OleDbDataReader GetItemsReader(){
             var comm = Parent.Connection.CreateCommand();
-            comm.CommandText = string.Format("SELECT * FROM [{0}]",Name);
+            comm.CommandText = $"SELECT * FROM [{Name}]";
             return comm.ExecuteReader();
         }
-
-        #region PropertyChanged
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info)
+        /// <summary>
+        /// Реализация интерфейса INotifyPropertyChanged
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void Dispose()
         {
-            _Table.Dispose();
+            _table.Dispose();
             //throw new NotImplementedException();
         }
-        #endregion
     }//DataTable
 }
