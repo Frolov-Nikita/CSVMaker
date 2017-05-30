@@ -35,7 +35,7 @@ namespace CSVMaker.ViewModel
         /// Выбранная таблица элементов
         /// </summary>
         public InnerTable SelectedElementsTable
-        { get { return _selectedElementsTable; }
+        { get => _selectedElementsTable;
             set { _selectedElementsTable = value; NotifyPropertyChanged(); }
         }
 
@@ -45,7 +45,7 @@ namespace CSVMaker.ViewModel
         /// </summary>
         public string SelectedStructureHeader
         {
-            get { return _selectedStructureHeader; }
+            get => _selectedStructureHeader;
             set { _selectedStructureHeader = value; NotifyPropertyChanged(); }
         }
 
@@ -55,7 +55,7 @@ namespace CSVMaker.ViewModel
         /// </summary>
         public string SelectedExportFile
         {
-            get { return _selectedExportFile; }
+            get => _selectedExportFile;
             set { _selectedExportFile = value; NotifyPropertyChanged(); }
         }
 
@@ -65,7 +65,7 @@ namespace CSVMaker.ViewModel
         /// </summary>
         public ObservableCollection<string> LastExportFilesList
         {
-            get { return _lastExportFilesList; }
+            get => _lastExportFilesList;
             set { _lastExportFilesList = value; NotifyPropertyChanged(); }
         }
 
@@ -76,7 +76,7 @@ namespace CSVMaker.ViewModel
         /// </summary>
         public ObservableCollection<Profile> Profiles
         {
-            get { return _profiles; }
+            get => _profiles;
             set { _profiles = value; NotifyPropertyChanged(); }
         }
 
@@ -84,8 +84,8 @@ namespace CSVMaker.ViewModel
         /// <summary>
         /// Ошибки
         /// </summary>
-        public ObservableCollection<string> Errors { get {return _errors; } }
-        
+        public ObservableCollection<string> Errors => _errors;
+
         public CommandRef ExportCsv { get; set; }
         public CommandRef EditProfiles { get; set; }
         public CommandRef SaveFileDialogCsv { get; set; }
@@ -105,8 +105,7 @@ namespace CSVMaker.ViewModel
             }
             else
             {
-                Profiles = new ObservableCollection<Profile>();
-                Profiles.Add( new Profile() { Name = "NewProfile" } );
+                Profiles = new ObservableCollection<Profile> {new Profile() {Name = "NewProfile"}};
                 _profileSaver.Save(_profiles);
             }
 
@@ -114,7 +113,7 @@ namespace CSVMaker.ViewModel
             // Пробуем загрузить настройки последней сессии
             //  загружаем последние файлы
             if(Properties.Settings.Default.DataFileList!=null)
-                foreach (string dfn in Properties.Settings.Default.DataFileList)
+                foreach (var dfn in Properties.Settings.Default.DataFileList)
                     if (File.Exists(dfn))
                         DataFiles.Add(new DataFile(dfn));
 
@@ -122,7 +121,7 @@ namespace CSVMaker.ViewModel
             SelectedStructureHeader = Properties.Settings.Default.SelectedStructureHeader;
 
             if (Properties.Settings.Default.LastExportFilesList != null)
-                foreach (string lfn in Properties.Settings.Default.LastExportFilesList)
+                foreach (var lfn in Properties.Settings.Default.LastExportFilesList)
                     LastExportFilesList.Add(lfn);
 
             SelectedElementsTable = (from t in AllTables
@@ -133,12 +132,12 @@ namespace CSVMaker.ViewModel
             SelectedProfile = (from p in Profiles
                                       where (p.Name == Properties.Settings.Default.SelectedProfile)
                                       select p).FirstOrDefault();
-            
-            ExportCsv = new CommandRef((args) => { ExportCsvMethod(); });
-            ExportCsv.CanExecuteDelegate = (arg)=>{
-                return  (SelectedElementsTable != null) &&
-                        (SelectedProfile != null) &&
-                        (SelectedStructureHeader != "");
+
+            ExportCsv = new CommandRef((args) => { ExportCsvMethod(); })
+            {
+                CanExecuteDelegate = (arg) => (SelectedElementsTable != null) &&
+                                              (SelectedProfile != null) &&
+                                              (SelectedStructureHeader != "")
             };
 
             EditProfiles = new CommandRef((args) => { EditProfilesMethod(); });
@@ -185,7 +184,7 @@ namespace CSVMaker.ViewModel
                 foreach(string cName in (from c in SelectedProfile.Rules where c.MastExist select c.Name ))
                     if (!GetTableByName(tmpTableName).Headers.Contains(cName)){
                         Log("Cтруктура: " + tmpTableName + " не содержит обязательного заголовка " + cName);
-                        err |= true;
+                        err = true;
                     }
 
             }// end_foreach
@@ -218,7 +217,7 @@ namespace CSVMaker.ViewModel
 
             // Добавляем заголовок в файл
             if (SelectedProfile.HeaderType == HeaderType.Custom)
-                File.WriteAllText(SelectedExportFile, SelectedProfile.CustomHeader);
+                File.WriteAllText(SelectedExportFile, SelectedProfile.CustomHeader + Environment.NewLine);
 
             if (SelectedProfile.HeaderType == HeaderType.None)
                 File.WriteAllText(SelectedExportFile, "");
@@ -228,7 +227,8 @@ namespace CSVMaker.ViewModel
                 var tmp="";
                 foreach (DataColumn c in strTmp.Table.Columns) 
                     tmp += c.ColumnName + SelectedProfile.FieldSeparator;                
-                File.WriteAllText(SelectedExportFile, tmp.Substring(0, tmp.Length - 1) + "\r\n",SelectedProfile.Encoding);
+                // ReSharper disable once LocalizableElement
+                File.WriteAllText(SelectedExportFile, tmp.Substring(0, tmp.Length - 1) + Environment.NewLine, SelectedProfile.Encoding);
             }
 
             // создаем экспортер
